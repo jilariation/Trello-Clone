@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/trello_db
+    username: postgres
+    password: qwerty
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        acks: 1
+        spring:
+          json:
+            add:
+              type:
+                headers: false
+
+security:
+  jwt:
+    secret-key: ${JWT_TOKEN}
+upload-server:
+  url: http://localhost:8081
+kafka-topic:
+    auth: auth-topic
+    notification: notification-topic

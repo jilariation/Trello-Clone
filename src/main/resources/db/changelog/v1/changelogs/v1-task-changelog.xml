@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v1-1" author="Artyom Sushchenko">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName='task'/>
+            </not>
+            <not>
+                <tableExists tableName='executor_task'/>
+            </not>
+        </preConditions>
+
+        <createTable tableName='task'>
+            <column name="id" type="uuid" generationType="BY DEFAULT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(256)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar"/>
+            <column name="priority" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="date" />
+            <column name="closed_at" type="timestamp"/>
+            <column name="updated_at" type="timestamp"/>
+            <column name="creator_id" type="uuid" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="board_id" type="uuid" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="comments_count" type="bigint" defaultValue="0"/>
+            <column name="attachments_count" type="bigint" defaultValue="0"/>
+            <column name="checkitems_count" type="bigint" defaultValue="0"/>
+            <column name="checkitems_checked_count" type="bigint" defaultValue="0"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="task" baseColumnNames="creator_id" constraintName="fk_task_users"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="task" baseColumnNames="board_id" constraintName="fk_task_boards"
+                                 referencedTableName="board"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+
+        <createTable tableName="executor_task">
+            <column name="executor_id" type="uuid"/>
+            <column name="task_id" type="uuid"/>
+        </createTable>
+        <addPrimaryKey tableName="executor_task" columnNames="executor_id, task_id"/>
+        <addForeignKeyConstraint baseTableName="executor_task" baseColumnNames="executor_id" constraintName="fk_executor_task"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="executor_task" baseColumnNames="task_id" constraintName="fk_task_executor"
+                                 referencedTableName="task"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+
+    </changeSet>
+</databaseChangeLog>

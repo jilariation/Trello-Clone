@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v1-1" author="Artyom Sushchenko">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName='task_attachment'/>
+            </not>
+        </preConditions>
+
+        <createTable tableName='task_attachment'>
+            <column name="id" type="uuid" generationType="BY DEFAULT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="task_id" type="uuid" />
+            <column name="url" type="varchar" />
+        </createTable>
+        <addForeignKeyConstraint baseTableName="task_attachment" baseColumnNames="task_id" constraintName="fk_task_attachment"
+                                 referencedTableName="task"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addUniqueConstraint tableName="task_attachment" columnNames="task_id, url"/>
+        <sqlFile path="db/changelog/v1/triggers/count_attachments.sql" dbms="postgresql, oracle" splitStatements="false" />
+    </changeSet>
+</databaseChangeLog>

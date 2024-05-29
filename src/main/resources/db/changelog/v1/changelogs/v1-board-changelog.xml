@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v1-1" author="Artyom Sushchenko">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName='task'/>
+            </not>
+            <not>
+                <tableExists tableName='executor_task'/>
+            </not>
+        </preConditions>
+
+        <createTable tableName='board'>
+            <column name="id" type="uuid" generationType="BY DEFAULT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(256)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar"/>
+            <column name="creator_id" type="uuid" >
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="board" baseColumnNames="creator_id" constraintName="fk_board_users"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+
+        <createTable tableName="member_board">
+            <column name="member_id" type="uuid"/>
+            <column name="board_id" type="uuid"/>
+        </createTable>
+        <addPrimaryKey tableName="member_board" columnNames="member_id, board_id"/>
+        <addForeignKeyConstraint baseTableName="member_board" baseColumnNames="member_id" constraintName="fk_member_board"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="member_board" baseColumnNames="board_id" constraintName="fk_board_member"
+                                 referencedTableName="board"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        </changeSet>
+</databaseChangeLog>

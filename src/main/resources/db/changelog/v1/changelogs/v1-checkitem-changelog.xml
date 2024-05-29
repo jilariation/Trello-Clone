@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v1-1" author="Artyom Sushchenko">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName='checkitem'/>
+            </not>
+        </preConditions>
+
+        <createTable tableName='checkitem'>
+            <column name="id" type="uuid" generationType="BY DEFAULT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false" />
+            </column>
+            <column name="is_checked" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="checklist_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="checkitem" baseColumnNames="checklist_id"
+                                 constraintName="fk_checklist_checkitem"
+                                 referencedTableName="checklist"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <sqlFile path="db/changelog/v1/triggers/count_checkitems.sql" dbms="postgresql, oracle" splitStatements="false" />
+    </changeSet>
+</databaseChangeLog>

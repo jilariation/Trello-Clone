@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v1-1" author="Artyom Sushchenko">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="task_tag"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="task_tag">
+            <column name="task_id" type="uuid" />
+            <column name="tag" type="varchar" />
+        </createTable>
+        <addPrimaryKey tableName="task_tag" columnNames="task_id, tag" constraintName="pk_task_tag"/>
+        <addForeignKeyConstraint baseTableName="task_tag" baseColumnNames="task_id" constraintName="fk_task_tag"
+                                 referencedTableName="task"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

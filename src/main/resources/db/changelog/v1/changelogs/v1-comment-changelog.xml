@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v1-1" author="Artyom Sushchenko">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName='comment'/>
+            </not>
+        </preConditions>
+
+        <createTable tableName='comment'>
+            <column name="id" type="uuid" generationType="BY DEFAULT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="message" type="varchar">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="timestamp" />
+            <column name="creator_id" type="uuid" />
+            <column name="task_id" type="uuid" />
+        </createTable>
+        <addForeignKeyConstraint baseTableName="comment" baseColumnNames="creator_id" constraintName="fk_users_comment"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="comment" baseColumnNames="task_id" constraintName="fk_task_comment"
+                                 referencedTableName="task"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"/>
+        <sqlFile path="db/changelog/v1/triggers/count_comments.sql" dbms="postgresql, oracle" splitStatements="false" />
+    </changeSet>
+</databaseChangeLog>

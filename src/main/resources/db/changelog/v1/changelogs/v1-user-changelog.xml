@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="v1-1" author="Artyom Sushchenko">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName='users'/>
+            </not>
+        </preConditions>
+
+        <createTable tableName='users'>
+            <column name="id" type="uuid" generationType="BY DEFAULT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="varchar(32)">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="password" type="varchar">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(32)" />
+            <column name="last_name" type="varchar(32)" />
+            <column name="email" type="varchar(64)">
+                <constraints unique="true"/>
+            </column>
+            <column name="role" type="varchar(32)" />
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
